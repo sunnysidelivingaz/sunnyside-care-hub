@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sunnyside Care Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#f5f3ef;--surface:#fff;--border:rgba(0,0,0,.09);--text:#1a1917;--muted:#7a7773;
+  --given-bg:#e8f5ef;--given:#1a6b3c;--given-border:#a3d4b8;
+  --refused-bg:#fce8e8;--refused:#a32020;--refused-border:#f0a0a0;
+  --held-bg:#fff3d8;--held:#7a5000;--held-border:#f0c860;
+  --na-bg:#f1efeb;--na:#5f5e5a;--na-border:#ccc;
+  --adrian:#2d6a4f;--adrian-l:#e8f5ef;
+  --andre:#1a5fa8;--andre-l:#e6f0fb;
+  --ava:#7b2d8b;--ava-l:#f3e8f7;
+  --dylan:#c45e1a;--dylan-l:#fdf0e6;
+  --miley:#0f6e56;--miley-l:#e1f5ee;
+  --melody:#b52b6e;--melody-l:#fce8f2;
+  --messiah:#a32020;--messiah-l:#fce8e8;
+  --west:#8a5c00;--west-l:#fdf3d8;
+  --mateo:#3d3489;--mateo-l:#eeedfe;
+  --r:14px;--rs:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px 11px;position:sticky;top:0;z-index:100}
+.hrow{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:15px;font-weight:600;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:#2d6a4f;flex-shrink:0}
+.hdate{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace}
+.haddr{font-size:10px;color:var(--muted);margin-top:2px}
+.main{padding:15px 13px 0;max-width:500px;margin:0 auto}
+.setup-banner{background:#fff8e6;border:1px solid #f0d060;border-radius:var(--r);padding:12px 14px;font-size:11px;color:#7a5c00;line-height:1.6;margin-bottom:16px}
+.setup-banner strong{color:#5a4200;display:block;margin-bottom:2px}
+.setup-banner code{background:#fde68a;padding:1px 5px;border-radius:3px;font-family:'DM Mono',monospace;font-size:10px}
+.loc-hdr{display:flex;align-items:center;gap:8px;margin:20px 0 9px}
+.loc-hdr:first-of-type{margin-top:0}
+.loc-badge{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+.loc-line{flex:1;height:1px;background:var(--border)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.card-hdr{display:flex;align-items:center;padding:12px 14px;cursor:pointer;user-select:none;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;letter-spacing:.02em}
+.ci{flex:1;min-width:0}
+.cn{font-size:13px;font-weight:600;letter-spacing:-.2px;line-height:1.2}
+.cd{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px}
+.chev{color:var(--muted);font-size:15px;transition:transform .2s;flex-shrink:0}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none;border-top:1px solid var(--border)}
+.card.open .card-body{display:block}
+.section-lbl{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+.time-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;user-select:none}
+.time-btn:last-child{border-bottom:none}
+.time-btn:active{background:var(--bg)}
+.time-left{display:flex;align-items:center;gap:9px}
+.time-icon{font-size:15px}
+.time-text{font-size:12px;font-weight:500}
+.time-sub{font-size:10px;color:var(--muted);margin-top:1px;font-family:'DM Mono',monospace}
+.time-right{display:flex;align-items:center;gap:6px}
+.signed-badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:500}
+.signed-badge.done{background:var(--given-bg);color:var(--given)}
+.time-arr{font-size:14px;color:var(--muted);transition:transform .2s}
+.time-btn.active .time-arr{transform:rotate(90deg)}
+/* Sign-off panel */
+.signoff{display:none;border-top:1px solid var(--border);background:#fafaf8;padding:12px}
+.signoff.open{display:block}
+.signoff-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.med-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 10px;margin-bottom:7px}
+.med-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.med-dose{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px}
+.med-note-pill{display:inline-block;font-size:9px;background:#fff3d8;color:#7a5000;border-radius:3px;padding:1px 5px;margin-bottom:5px;font-weight:500}
+.toggle-row{display:flex;gap:5px;flex-wrap:wrap}
+.tog{flex:1;min-width:56px;padding:6px 4px;border-radius:6px;font-size:11px;font-weight:500;text-align:center;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--muted);transition:all .12s;user-select:none}
+.tog.sel-given{background:var(--given-bg);color:var(--given);border-color:var(--given-border)}
+.tog.sel-refused{background:var(--refused-bg);color:var(--refused);border-color:var(--refused-border)}
+.tog.sel-held{background:var(--held-bg);color:var(--held);border-color:var(--held-border)}
+.tog.sel-na{background:var(--na-bg);color:var(--na);border-color:var(--na-border)}
+.signoff-footer{margin-top:10px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.initials-wrap{display:flex;flex-direction:column;gap:3px}
+.initials-label{font-size:10px;color:var(--muted);font-weight:500}
+.initials-input{width:72px;padding:8px 10px;font-size:13px;font-family:'DM Mono',monospace;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);text-transform:uppercase}
+.initials-input:focus{outline:none;border-color:#888}
+.notes-wrap{flex:1;display:flex;flex-direction:column;gap:3px;min-width:120px}
+.notes-label{font-size:10px;color:var(--muted);font-weight:500}
+.notes-input{width:100%;padding:7px 9px;font-size:11px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);resize:none;font-family:'DM Sans',sans-serif}
+.notes-input:focus{outline:none;border-color:#888}
+.submit-btn{width:100%;margin-top:10px;padding:11px;font-size:13px;font-weight:600;border-radius:var(--rs);border:none;cursor:pointer;transition:opacity .15s;letter-spacing:.01em}
+.submit-btn:active{opacity:.8}
+.submit-btn.ready{background:#1a6b3c;color:#fff}
+.submit-btn.loading{background:#ccc;color:#888;pointer-events:none}
+.submit-btn.error{background:#a32020;color:#fff}
+.success-msg{display:none;background:var(--given-bg);border:1px solid var(--given-border);border-radius:var(--rs);padding:10px 12px;font-size:12px;color:var(--given);font-weight:500;text-align:center;margin-top:8px}
+.success-msg.show{display:block}
+/* Shared section */
+.shared-row{display:flex;align-items:center;gap:9px;padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.shared-row:last-child{border-bottom:none}
+.shared-row:active{background:var(--bg)}
+.sr-icon{font-size:16px}
+.sr-text{flex:1}
+.sr-name{font-size:12px;font-weight:500}
+.sr-sub{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px}
+.sr-arr{font-size:13px;color:var(--muted)}
+/* Color themes */
+.adrian .av{background:var(--adrian-l);color:var(--adrian)}
+.andre .av{background:var(--andre-l);color:var(--andre)}
+.ava .av{background:var(--ava-l);color:var(--ava)}
+.dylan .av{background:var(--dylan-l);color:var(--dylan)}
+.miley .av{background:var(--miley-l);color:var(--miley)}
+.melody .av{background:var(--melody-l);color:var(--melody)}
+.messiah .av{background:var(--messiah-l);color:var(--messiah)}
+.west .av{background:var(--west-l);color:var(--west)}
+.mateo .av{background:var(--mateo-l);color:var(--mateo)}
+footer{text-align:center;padding:28px 16px 0;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div class="logo"><div class="dot"></div>Sunnyside Care Hub</div>
+    <div class="hdate" id="hdate"></div>
+  </div>
+  <div class="haddr">Sunnyside Living · Laveen &amp; Phoenix, AZ</div>
+</header>
+
+<div class="main" id="main"></div>
+
+<script>
+// ─── CONFIGURATION ─────────────────────────────────────────────
+// Paste your Google Apps Script Web App URL here after setup:
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzqGroXU5YPkqlgDIA909PKI5GMsoH_uMkUJ6GWJ6hXxRaxC1j2alntCwoqZFHGMRqG/exec';
+// ───────────────────────────────────────────────────────────────
+
+const RESIDENTS = [
+  { id:'adrian', name:'Adrian Castillo', dob:'08/03/2013', loc:'Sunnyside 1 — Laveen', color:'adrian', av:'AC', tags:'G-Tube',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Clobazam', d:'2.5mg/mL · 8mL · G-Tube'},
+        {n:'Lansoprazole', d:'3mg/mL · 10mL · G-Tube'},
+        {n:'Levetiracetam', d:'100mg/mL · 3mL · G-Tube'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Clobazam', d:'2.5mg/mL · 8mL · G-Tube'},
+        {n:'Levetiracetam', d:'100mg/mL · 3mL · G-Tube'},
+        {n:'Melatonin', d:'3mg · 1 tab · G-Tube'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Kate Farms Pediatric Peptide', d:'285mL · 9AM · 1PM · 5PM · 9PM', note:'120mL water flush after each feed'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Daily morning', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'andre', name:'Andre Crochett', dob:'12/25/2008', loc:'Sunnyside 1 — Laveen', color:'andre', av:'AC', tags:'Oral · Dexcom',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Bupropion', d:'300mg · 1 tab · Oral'},
+        {n:'Lithium Carbonate', d:'600mg · 1 tab · Oral'},
+        {n:'Escitalopram', d:'20mg · 1 tab · Oral'},
+        {n:'Ferosul', d:'325mg · 1 tab · Oral'},
+        {n:'Vitamin D3', d:'50mcg · 1 tab · Oral'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Prazosin HCL', d:'2mg · 1 tab · Oral'},
+        {n:'Lithium Carbonate', d:'600mg · 1 tab · Oral'},
+        {n:'Aripiprazole', d:'15mg · 1 tab · Oral'}]},
+      { time:'Dexcom Change', icon:'📡', type:'device', meds:[
+        {n:'Dexcom Sensor', d:'Change every 10 days · 8AM', note:'Log date of change & expiration date'}]},
+      { time:'Insulin Log', icon:'💉', type:'device', meds:[
+        {n:'Insulin', d:'Log units administered', note:'Record amount in units'}]}
+    ]},
+
+  { id:'ava', name:'Ava Avila', dob:'04/01/2021', loc:'Sunnyside 1 — Laveen', color:'ava', av:'AA', tags:'G-Tube · Complex',
+    schedules:[
+      { time:'6:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 1.5mL · G-Tube'},
+        {n:'Bisacodyl', d:'5mg · 1 tab · G-Tube', note:'Crush and mix with fluid'}]},
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Clobazam', d:'2.5mg/mL · 5mL · G-Tube'},
+        {n:'Diazepam', d:'2mg · 1 tab · G-Tube'},
+        {n:'Famotidine', d:'40mg/5mL · 1mL · G-Tube'},
+        {n:'Flintstones Multivitamin', d:'10mg · 1 tab · G-Tube', note:'Crush and mix with water'},
+        {n:'Gabapentin', d:'250mg/5mL · 4mL · G-Tube', note:'REFRIGERATE'},
+        {n:'Polyethylene Glycol 3350', d:'17g · 1 capful · G-Tube', note:'Mix with 4–8 oz liquid'}]},
+      { time:'10:00 AM', icon:'💊', meds:[
+        {n:'Clonidine', d:'10mcg/mL · 5mL · G-Tube', note:'⚠ HOLD if BP < 75/40'}]},
+      { time:'12:00 PM', icon:'💊', meds:[
+        {n:'Gabapentin', d:'250mg/5mL · 4mL · G-Tube', note:'REFRIGERATE'}]},
+      { time:'2:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 1.5mL · G-Tube'}]},
+      { time:'3:00 PM', icon:'💊', meds:[
+        {n:'Polyethylene Glycol 3350', d:'17g · 1 capful · G-Tube', note:'Mix with 4–8 oz liquid'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Clobazam', d:'2.5mg/mL · 5mL · G-Tube'},
+        {n:'Diazepam', d:'2mg · 1 tab · G-Tube'},
+        {n:'Famotidine', d:'40mg/5mL · 1mL · G-Tube'},
+        {n:'Gabapentin', d:'250mg/5mL · 6mL · G-Tube', note:'REFRIGERATE'},
+        {n:'Bisacodyl', d:'10mg · 1 suppository · PR', note:'Rectal — not G-Tube'}]},
+      { time:'10:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 1.5mL · G-Tube'},
+        {n:'Clonidine', d:'10mcg/mL · 12mL · G-Tube', note:'⚠ HOLD if BP < 75/40'}]},
+      { time:'Hab Goal — Stander', icon:'⭐', type:'hab', meds:[
+        {n:'Step 1: Place in stander', d:'Staff assists Ava into stander'},
+        {n:'Step 2: Keep in stander 30 min', d:'Required daily duration'}]}
+    ]},
+
+  { id:'dylan', name:'Dylan Brown', dob:'09/15/2011', loc:'Sunnyside 1 — Laveen', color:'dylan', av:'DB', tags:'G-Tube',
+    schedules:[
+      { time:'12:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'20mg · 1 tab · G-Tube', note:'60mL water flush after'}]},
+      { time:'6:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'20mg · 1 tab · G-Tube', note:'60mL water flush after'}]},
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Miralax', d:'17g/scoop · 1 scoop · G-Tube', note:'Administer BEFORE feed'},
+        {n:'Levetiracetam', d:'100mg/1mL · 4mL · G-Tube', note:'Administer BEFORE feed'},
+        {n:'Pantoprazole', d:'2mg/mL · 20mL · G-Tube', note:'Administer BEFORE feed'}]},
+      { time:'12:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'20mg · 1 tab · G-Tube', note:'60mL water flush after'}]},
+      { time:'6:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'20mg · 1 tab · G-Tube', note:'60mL water flush after'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Levetiracetam', d:'100mg/1mL · 4mL · G-Tube'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Neocate Splash Formula', d:'1cal/1mL · 375mL · 9AM · 1PM · 5PM · 9PM', note:'120mL water flush after each feed'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Every night 8PM', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'miley', name:'Miley Wilkerson', dob:'09/13/2010', loc:'Sunnyside 1 — Laveen', color:'miley', av:'MW', tags:'G-Tube',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Famotidine', d:'40mg/5mL · 2.5mL · G-Tube'},
+        {n:'Pregabalin', d:'75mg · 1 cap · Oral'},
+        {n:'Ferrous Sulfate', d:'15mg/mL · 5mL · G-Tube'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Famotidine', d:'40mg/5mL · 2.5mL · G-Tube'},
+        {n:'Pregabalin', d:'75mg · 1 cap · Oral'}]},
+      { time:'9:00 PM', icon:'💊', meds:[
+        {n:'NanoVM', d:'11.2g · 2 scoops · G-Tube', note:'Add directly to feed'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Kate Farms Pediatric Peptide', d:'320mL · 9AM · 1PM · 5PM · 9PM', note:'100mL water flush BEFORE and AFTER each feed'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Daily morning', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'melody', name:'Melody Martinez', dob:'11/04/2024', loc:'Sunnyside 2 — Phoenix', color:'melody', av:'MM', tags:'G-Tube',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Gabapentin', d:'250mg/5mL · 1mL · G-Tube'},
+        {n:'Poly-Vi-Sol Drops', d:'1mL · G-Tube'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Gabapentin', d:'250mg/5mL · 1mL · G-Tube'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Pediasure Peptide 1.0', d:'170mL/hr · 170mL · 6AM · 10AM · 2PM · 6PM · 10PM', note:'30mL water flush after each feed'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Daily morning 8AM', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'messiah', name:'Messiah Robinson', dob:'09/08/2015', loc:'Sunnyside 2 — Phoenix', color:'messiah', av:'MR', tags:'G-Tube · Complex',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 4mL · G-Tube'},
+        {n:'Pantoprazole', d:'2mg/mL · 10mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg · 0.5 tab · G-Tube'},
+        {n:'Keppra (Levetiracetam)', d:'100mg/mL · 7mL · G-Tube'},
+        {n:'Polyethylene Glycol 3350', d:'17g in 8oz water · G-Tube'},
+        {n:'Senna', d:'8.8mg/5mL · 5mL · G-Tube'},
+        {n:'Trihexyphenidyl', d:'2mg · 1 tab · G-Tube'},
+        {n:'Sodium Chloride Nasal Spray', d:'0.2% · 1 spray · Nasal'},
+        {n:'Tizanidine', d:'2mg · 3 tabs · G-Tube'},
+        {n:'Valproic Acid', d:'250mg/mL · 9mL · G-Tube'}]},
+      { time:'9:00 AM', icon:'💊', meds:[
+        {n:'Albuterol', d:'250mg/5mL · 3mL'},
+        {n:'Budesonide', d:'0.25mg/2mL · 2mL · G-Tube'},
+        {n:'Vest Treatment', d:'4hZ · 20 minutes'}]},
+      { time:'2:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 4mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg · 0.5 tab · G-Tube'},
+        {n:'Tizanidine', d:'2mg · 3 tabs · G-Tube'}]},
+      { time:'3:00 PM', icon:'💊', meds:[
+        {n:'Albuterol', d:'250mg/5mL · 3mL'},
+        {n:'Vest Treatment', d:'4hZ · 20 minutes'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 4mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg · 0.5 tab · G-Tube'},
+        {n:'Keppra (Levetiracetam)', d:'100mg/mL · 7mL · G-Tube'},
+        {n:'Senna', d:'8.8mg/5mL · 5mL · G-Tube'},
+        {n:'Trihexyphenidyl', d:'2mg · 1 tab · G-Tube'},
+        {n:'Melatonin', d:'1mg/mL · 3mL · G-Tube'},
+        {n:'Sodium Chloride Nasal Spray', d:'0.2% · 1 spray · Nasal'},
+        {n:'Tizanidine', d:'2mg · 3 tabs · G-Tube'},
+        {n:'Valproic Acid', d:'250mg/5mL · 9mL · G-Tube'},
+        {n:'Clonidine', d:'0.1mg · 3 tabs · G-Tube'},
+        {n:'Cholecalciferol (Vit D3)', d:'10mcg/mL · 5mL · G-Tube'}]},
+      { time:'9:00 PM', icon:'💊', meds:[
+        {n:'Albuterol', d:'250mg/5mL · 3mL'},
+        {n:'Budesonide', d:'0.25mg/2mL · 2mL'},
+        {n:'Vest Treatment', d:'4hZ · 20 minutes'}]},
+      { time:'2:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 4mL · G-Tube'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Kate Farms Peptide — Continuous Feed', d:'60mL/hr · Start 10:30AM · Remove 8AM next day', note:'300mL 1.5 + 1000mL 1.0 blend'},
+        {n:'Water Flush', d:'60mL at 8AM · 12PM · 4PM · 8PM · 12AM'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Daily morning 8AM', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'west', name:'West Mosby', dob:'12/30/2024', loc:'Sunnyside 2 — Phoenix', color:'west', av:'WM', tags:'G-Tube · Inhaler · Complex',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Cholecalciferol (Vit D3)', d:'400IU/mL · 0.5mL · G-Tube'},
+        {n:'Keppra (Levetiracetam)', d:'100mg/mL · 1mL · G-Tube'},
+        {n:'Baclofen', d:'25mg/5mL · 0.4mL · G-Tube'},
+        {n:'Clonidine', d:'10mcg/mL · 0.5mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg/5mL · 4mL · G-Tube'},
+        {n:'Albuterol Inhaler', d:'90mcg/inh · 4 puffs · Inhaler'},
+        {n:'Fluticasone Inhaler', d:'110mcg/inh · 2 puffs · Inhaler'},
+        {n:'Fluticasone Nasal Spray', d:'120mcg/inh · 1 spray/nostril · Nasal'},
+        {n:'Trihexyphenidyl', d:'0.4mg/mL · 2mL · G-Tube'},
+        {n:'Chest Therapy', d:'Per protocol'},
+        {n:'Cough Assist', d:'Per protocol'}]},
+      { time:'9:00 AM', icon:'💊', meds:[
+        {n:'Liquigen', d:'2mL · G-Tube', note:'Administer with feed'}]},
+      { time:'2:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 0.4mL · G-Tube'},
+        {n:'Albuterol Inhaler', d:'90mcg/inh · 4 puffs · Inhaler'},
+        {n:'Clonidine', d:'10mcg/mL · 0.5mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg/5mL · 4mL · G-Tube'},
+        {n:'Trihexyphenidyl', d:'0.4mg/mL · 2mL · G-Tube'}]},
+      { time:'3:00 PM', icon:'💊', meds:[
+        {n:'Liquigen', d:'2mL · G-Tube', note:'Administer with feed'}]},
+      { time:'6:00 PM', icon:'💊', meds:[
+        {n:'Liquigen', d:'2mL · G-Tube', note:'Administer with feed'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 0.4mL · G-Tube'},
+        {n:'Clonidine', d:'10mcg/mL · 0.5mL · G-Tube'},
+        {n:'Glycopyrrolate', d:'1mg/5mL · 4mL · G-Tube'},
+        {n:'Keppra (Levetiracetam)', d:'100mg/mL · 1mL · G-Tube'},
+        {n:'Fluticasone Nasal Spray', d:'50mcg/inh · 1 spray/nostril · Nasal'},
+        {n:'Albuterol Inhaler', d:'90mcg/inh · 4 puffs · Inhaler'},
+        {n:'Fluticasone Inhaler', d:'110mcg/inh · 2 puffs · Inhaler'},
+        {n:'Trihexyphenidyl', d:'0.4mg/mL · 2mL · G-Tube'},
+        {n:'Chest Therapy', d:'Per protocol'},
+        {n:'Cough Assist', d:'Per protocol'}]},
+      { time:'2:00 AM', icon:'💊', meds:[
+        {n:'Baclofen', d:'25mg/5mL · 0.4mL · G-Tube'},
+        {n:'Clonidine', d:'10mcg/mL · 0.5mL · G-Tube'}]},
+      { time:'G-Tube Feed', icon:'🧴', type:'feed', meds:[
+        {n:'Enfamil NeuroPro Gentlease', d:'160mL · 9AM · 12PM · 3PM · 6PM · 9PM', note:'Mix 6oz formula with 160mL water'}]},
+      { time:'Dressing Change', icon:'🩹', type:'dressing', meds:[
+        {n:'G-Tube Dressing', d:'Daily morning', note:'Document site condition before & after'}]}
+    ]},
+
+  { id:'mateo', name:'Mateo Pacheco Arreola', dob:'01/19/2023', loc:'Sunnyside 2 — Phoenix', color:'mateo', av:'MP', tags:'Oral',
+    schedules:[
+      { time:'8:00 AM', icon:'💊', meds:[
+        {n:'Lacosamide', d:'10mg/mL · 8mL · Oral'},
+        {n:'Clobazam', d:'2.5mg/mL · 1mL · Oral'}]},
+      { time:'8:00 PM', icon:'💊', meds:[
+        {n:'Everolimus', d:'3mg · 1 tab · Oral'},
+        {n:'Lacosamide', d:'10mg/mL · 8mL · Oral'},
+        {n:'Clobazam', d:'2.5mg/mL · 1mL · Oral'}]}
+    ]}
+];
+
+const SHARED = [
+  { id:'bathroom', icon:'🚿', name:'Bathroom Log', sub:'E = eliminated · B = bowel movement' },
+  { id:'sleep', icon:'😴', name:'Sleep Log', sub:'Sleep period start & end · medication given' },
+  { id:'bodychart', icon:'🩺', name:'Body Chart', sub:'Areas of discomfort · symptom type' },
+  { id:'hab', icon:'⭐', name:'Habilitation Goal', sub:'Daily goal tracking · +/B/R' }
+];
+
+// State: which sign-off panels are open
+const openPanels = {};
+const signedOff = {};
+
+function today() {
+  return new Date().toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});
+}
+
+function buildUI() {
+  const main = document.getElementById('main');
+  const configured = ENDPOINT !== 'https://script.google.com/macros/s/AKfycbzqGroXU5YPkqlgDIA909PKI5GMsoH_uMkUJ6GWJ6hXxRaxC1j2alntCwoqZFHGMRqG/exec';
+
+  let html = '';
+  if (!configured) {
+    html += `<div class="setup-banner"><strong>Setup required — data not yet saving</strong>
+      See the setup guide below to connect Google Sheets in 5 minutes. Until then, the sign-off UI is fully functional but submissions won't be saved.
+      <br><br>Quick steps: 1) Create a Google Sheet · 2) Open <a href="https://script.google.com" target="_blank" style="color:#5a4200">script.google.com</a> · 3) Paste the Apps Script code · 4) Deploy as web app · 5) Replace <code>https://script.google.com/macros/s/AKfycbzqGroXU5YPkqlgDIA909PKI5GMsoH_uMkUJ6GWJ6hXxRaxC1j2alntCwoqZFHGMRqG/exec</code> in this file with your web app URL.</div>`;
+  }
+
+  const locs = [...new Set(RESIDENTS.map(r => r.loc))];
+  locs.forEach(loc => {
+    html += `<div class="loc-hdr"><div class="loc-badge">${loc}</div><div class="loc-line"></div></div>`;
+    RESIDENTS.filter(r => r.loc === loc).forEach(r => {
+      html += buildResidentCard(r);
+    });
+  });
+
+  html += `<div class="loc-hdr"><div class="loc-badge">Shared — all residents</div><div class="loc-line"></div></div>`;
+  html += `<div class="card"><div class="card-body" style="display:block">`;
+  SHARED.forEach(s => {
+    html += `<div class="shared-row" onclick="alert('Shared log forms coming soon — tap a resident above for MAR sign-off.')">
+      <div class="sr-icon">${s.icon}</div>
+      <div class="sr-text"><div class="sr-name">${s.name}</div><div class="sr-sub">${s.sub}</div></div>
+      <div class="sr-arr">›</div></div>`;
+  });
+  html += `</div></div>`;
+
+  html += `<footer>Sunnyside Living · Care Hub v3.0 · 9 residents · 2 locations</footer>`;
+  main.innerHTML = html;
+}
+
+function buildResidentCard(r) {
+  let schedHTML = '';
+  r.schedules.forEach((sch, si) => {
+    const pid = `${r.id}-${si}`;
+    const isOpen = openPanels[pid];
+    const isSigned = signedOff[pid];
+    const subtext = sch.meds.slice(0,3).map(m=>m.n).join(' · ') + (sch.meds.length > 3 ? ` +${sch.meds.length-3} more` : '');
+    schedHTML += `
+      <div class="time-btn ${isOpen?'active':''}" onclick="togglePanel('${pid}','${r.id}',${r.schedules.indexOf(sch)})">
+        <div class="time-left">
+          <div class="time-icon">${sch.icon}</div>
+          <div><div class="time-text">${sch.time}</div><div class="time-sub">${subtext}</div></div>
+        </div>
+        <div class="time-right">
+          ${isSigned ? '<span class="signed-badge done">✓ Signed</span>' : ''}
+          <div class="time-arr">›</div>
+        </div>
+      </div>
+      <div class="signoff ${isOpen?'open':''}" id="panel-${pid}">${isOpen ? buildSignoff(r, sch, pid) : ''}</div>`;
+  });
+
+  return `<div class="card ${r.color}" id="card-${r.id}">
+    <div class="card-hdr" onclick="toggleCard('${r.id}')">
+      <div class="av">${r.av}</div>
+      <div class="ci"><div class="cn">${r.name}</div><div class="cd">DOB: ${r.dob} · ${r.tags}</div></div>
+      <div class="chev">&#8964;</div>
+    </div>
+    <div class="card-body">${schedHTML}</div>
+  </div>`;
+}
+
+function buildSignoff(r, sch, pid) {
+  const isHab = sch.type === 'hab';
+  const opts = isHab
+    ? [['+ Completed','sel-given'],['- Unsuccessful','sel-refused'],['B Barrier','sel-held'],['R Refused','sel-na']]
+    : [['Given','sel-given'],['Refused','sel-refused'],['Held','sel-held'],['N/A','sel-na']];
+
+  let medsHTML = sch.meds.map((m, mi) => `
+    <div class="med-row">
+      <div class="med-name">${m.n}</div>
+      <div class="med-dose">${m.d}</div>
+      ${m.note ? `<div class="med-note-pill">${m.note}</div>` : ''}
+      <div class="toggle-row">
+        ${opts.map(([label, cls]) =>
+          `<div class="tog" data-pid="${pid}" data-mi="${mi}" data-val="${cls}" onclick="selectTog(this,'${pid}',${mi},'${cls}')">${label}</div>`
+        ).join('')}
+      </div>
+    </div>`).join('');
+
+  return `<div class="signoff-title">${r.name} · ${sch.time} · ${today()}</div>
+    ${medsHTML}
+    <div class="signoff-footer">
+      <div class="initials-wrap">
+        <div class="initials-label">Staff initials *</div>
+        <input class="initials-input" id="init-${pid}" maxlength="5" placeholder="S.J." autocomplete="off">
+      </div>
+      <div class="notes-wrap">
+        <div class="notes-label">Notes (optional)</div>
+        <textarea class="notes-input" id="notes-${pid}" rows="2" placeholder="Any observations..."></textarea>
+      </div>
+    </div>
+    <button class="submit-btn ready" id="btn-${pid}" onclick="submitSignoff('${pid}','${r.id}','${sch.time}',${r.schedules.indexOf(sch)})">Sign Off — ${sch.time}</button>
+    <div class="success-msg" id="ok-${pid}">✓ Sign-off recorded for ${sch.time}</div>`;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('open');
+}
+
+function togglePanel(pid, rid, si) {
+  const wasOpen = openPanels[pid];
+  openPanels[pid] = !wasOpen;
+  refreshCard(rid);
+}
+
+function refreshCard(rid) {
+  const r = RESIDENTS.find(x => x.id === rid);
+  const card = document.getElementById('card-' + rid);
+  const wasOpen = card.classList.contains('open');
+  const newHTML = buildResidentCard(r);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = newHTML;
+  const newCard = tmp.firstChild;
+  if (wasOpen) newCard.classList.add('open');
+  card.replaceWith(newCard);
+}
+
+function selectTog(el, pid, mi, val) {
+  const row = el.closest('.toggle-row');
+  row.querySelectorAll('.tog').forEach(t => {
+    t.classList.remove('sel-given','sel-refused','sel-held','sel-na');
+  });
+  el.classList.add(val);
+}
+
+async function submitSignoff(pid, rid, time, si) {
+  const r = RESIDENTS.find(x => x.id === rid);
+  const sch = r.schedules[si];
+  const initials = document.getElementById('init-' + pid).value.trim().toUpperCase();
+  const notes = document.getElementById('notes-' + pid).value.trim();
+
+  if (!initials) { alert('Please enter your staff initials.'); return; }
+
+  const medStatuses = [];
+  sch.meds.forEach((m, mi) => {
+    const panel = document.getElementById('panel-' + pid);
+    const rows = panel.querySelectorAll('.toggle-row');
+    const sel = rows[mi] ? rows[mi].querySelector('.tog[class*="sel-"]') : null;
+    medStatuses.push({ med: m.n, dose: m.d, status: sel ? sel.textContent : 'Not recorded' });
+  });
+
+  const allRecorded = medStatuses.every(ms => ms.status !== 'Not recorded');
+  if (!allRecorded) {
+    const missing = medStatuses.filter(ms => ms.status === 'Not recorded').map(ms => ms.med).join(', ');
+    if (!confirm(`Some medications have no status recorded:\n${missing}\n\nSubmit anyway?`)) return;
+  }
+
+  const btn = document.getElementById('btn-' + pid);
+  const okMsg = document.getElementById('ok-' + pid);
+  btn.textContent = 'Saving...';
+  btn.className = 'submit-btn loading';
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    date: today(),
+    resident: r.name,
+    dob: r.dob,
+    location: r.loc,
+    timeSlot: time,
+    medications: medStatuses,
+    initials,
+    notes
+  };
+
+  if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbzqGroXU5YPkqlgDIA909PKI5GMsoH_uMkUJ6GWJ6hXxRaxC1j2alntCwoqZFHGMRqG/exec') {
+    await new Promise(res => setTimeout(res, 600));
+    btn.style.display = 'none';
+    okMsg.textContent = '✓ Sign-off recorded (not saved — connect Google Sheets to save data)';
+    okMsg.classList.add('show');
+    signedOff[pid] = true;
+    return;
+  }
+
+  try {
+    await fetch(ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    btn.style.display = 'none';
+    okMsg.classList.add('show');
+    signedOff[pid] = true;
+  } catch(err) {
+    btn.textContent = 'Error — tap to retry';
+    btn.className = 'submit-btn error';
+    btn.onclick = () => submitSignoff(pid, rid, time, si);
+  }
+}
+
+// Init
+document.getElementById('hdate').textContent =
+  new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+buildUI();
+</script>
+</body>
+</html>
